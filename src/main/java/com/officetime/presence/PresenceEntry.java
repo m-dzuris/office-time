@@ -12,8 +12,12 @@ import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalDate;
 
+/**
+ * One person's decision for one day. It belongs to the user alone: groups never copy or own it, they only
+ * decide who is allowed to see it.
+ */
 @Entity
-@Table(name = "presence_entry", uniqueConstraints = @UniqueConstraint(columnNames = "entry_date"))
+@Table(name = "presence_entry", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "entry_date"}))
 public class PresenceEntry {
 
     public static final int NOTE_MAX_LENGTH = 200;
@@ -21,6 +25,9 @@ public class PresenceEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "entry_date", nullable = false)
     private LocalDate date;
@@ -36,7 +43,8 @@ public class PresenceEntry {
         // required by JPA
     }
 
-    public PresenceEntry(LocalDate date, PresenceStatus status, String note) {
+    public PresenceEntry(Long userId, LocalDate date, PresenceStatus status, String note) {
+        this.userId = userId;
         this.date = date;
         this.status = status;
         this.note = note;
@@ -44,6 +52,10 @@ public class PresenceEntry {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public LocalDate getDate() {
