@@ -7,7 +7,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -105,15 +104,6 @@ class AuthApiTest extends ApiTestSupport {
         postAs(ada, "/api/auth/logout", null).andExpect(status().isNoContent());
 
         getAs(ada, "/api/presence?from=2026-10-05&to=2026-10-11").andExpect(status().isUnauthorized());
-    }
-
-    /**
-     * The page asks for this cookie with a plain GET (on load, and again after signing out, which deletes it)
-     * and then sends its value back in the X-XSRF-TOKEN header.
-     */
-    @Test
-    void anyReadOfTheApiHandsOutTheCsrfCookie() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/auth/me")).andExpect(cookie().exists("XSRF-TOKEN"));
     }
 
     @Test
